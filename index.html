@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cami — Application for Ellen's Hospi</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --plumb:#7ce03d;
+  --plumb-dk:#5fb82a;
+  --plumb-glow:rgba(124,224,61,.5);
+  --sims-blue:#1e88c4;
+  --sims-blue-dk:#0d5c8c;
+  --sims-blue-lt:#a6dcf2;
+  --ellen-pink:#ff2d9a;
+  --ellen-cyan:#a8f5e8;
+  --ellen-pink-soft:#ffb3d9;
+  --ink:#0a1f2e;
+  --ink-soft:#244257;
+  --shadow-deep:0 14px 40px rgba(10,31,46,.4);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Nunito',sans-serif;
+  background:#062236;
+  color:var(--ink);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ============================================================
+   LOADING SCREEN HERO
+============================================================ */
+.loader{
+  min-height:100vh;
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(124,224,61,.15) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 80%, rgba(255,45,154,.18) 0%, transparent 55%),
+    linear-gradient(135deg,#041726 0%,#072c47 50%,#0a3656 100%);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:60px 24px;position:relative;overflow:hidden;
+}
+.loader::before{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);
+  background-size:24px 24px;pointer-events:none;
+}
+.loader-meta{position:absolute;top:28px;left:28px;font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(166,220,242,.55);letter-spacing:1.5px;text-transform:uppercase;}
+.loader-meta-r{position:absolute;top:28px;right:28px;font-family:'JetBrains Mono',monospace;font-size:11px;color:rgba(166,220,242,.55);letter-spacing:1.5px;text-transform:uppercase;}
+.plumbob-stage{position:relative;width:140px;height:180px;margin-bottom:48px;z-index:2;}
+.plumbob{
+  width:80px;height:80px;position:absolute;left:50%;top:0;
+  transform:translateX(-50%) rotate(45deg);
+  background:linear-gradient(135deg,#a6f55b 0%,#7ce03d 50%,#4fa01f 100%);
+  border-radius:8px;
+  box-shadow:0 0 40px var(--plumb-glow),0 0 80px rgba(124,224,61,.3),inset 0 0 20px rgba(255,255,255,.4);
+  animation:plumb-float 2.4s ease-in-out infinite;
+}
+.plumbob::before{content:"";position:absolute;inset:6px;background:linear-gradient(135deg,rgba(255,255,255,.6) 0%,transparent 50%);border-radius:6px;}
+.plumbob::after{content:"";position:absolute;top:14px;left:14px;width:20px;height:20px;background:rgba(255,255,255,.7);border-radius:50%;filter:blur(4px);}
+.plumbob-shadow{position:absolute;bottom:0;left:50%;transform:translateX(-50%);width:90px;height:14px;background:radial-gradient(ellipse,rgba(124,224,61,.4) 0%,transparent 70%);border-radius:50%;animation:shadow-pulse 2.4s ease-in-out infinite;}
+@keyframes plumb-float{0%,100%{transform:translateX(-50%) translateY(0) rotate(45deg);}50%{transform:translateX(-50%) translateY(-18px) rotate(45deg);}}
+@keyframes shadow-pulse{0%,100%{transform:translateX(-50%) scale(1);opacity:.6;}50%{transform:translateX(-50%) scale(.7);opacity:.3;}}
+.loader-logo{
+  font-family:'Fredoka',sans-serif;
+  color:#fff;line-height:1;
+  margin-bottom:34px;text-align:center;z-index:2;
+  display:flex;align-items:flex-end;justify-content:center;gap:6px;
+}
+.loader-logo-the{font-weight:300;font-size:18px;letter-spacing:.6px;color:rgba(255,255,255,.85);padding-bottom:5px;}
+.loader-logo strong{font-weight:600;font-size:38px;letter-spacing:-.5px;color:#fff;}
+.loader-logo strong em{font-style:normal;color:var(--plumb);font-weight:700;text-shadow:0 0 16px var(--plumb-glow);}
+.loader-title{font-family:'Fredoka',sans-serif;font-weight:600;font-size:clamp(40px,7vw,72px);color:#fff;letter-spacing:-1.5px;text-align:center;line-height:1.05;margin-bottom:30px;z-index:2;text-shadow:0 2px 30px rgba(0,0,0,.4);}
+.loader-title .pink{color:var(--ellen-pink);}
+.loader-title .green{color:var(--plumb);}
+.loader-welcome{
+  max-width:640px;
+  font-family:'Nunito',sans-serif;font-weight:500;
+  font-size:16px;color:rgba(255,255,255,.92);
+  line-height:1.65;letter-spacing:.1px;text-align:center;
+  margin-bottom:42px;z-index:2;
+  padding:0 20px;
+}
+.loader-welcome em{
+  font-style:italic;font-weight:700;color:#fff;
+  background:linear-gradient(180deg,transparent 65%,rgba(124,224,61,.5) 65%);
+  padding:0 3px;
+}
+.loader-welcome strong{color:#fff;font-weight:700;}
+.loader-sub{font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--sims-blue-lt);letter-spacing:3px;text-transform:uppercase;margin-bottom:24px;z-index:2;}
+.loader-sub .dot{display:inline-block;animation:dots 1.4s infinite;}
+.loader-sub .dot:nth-child(2){animation-delay:.2s;}
+.loader-sub .dot:nth-child(3){animation-delay:.4s;}
+@keyframes dots{0%,80%,100%{opacity:.2;}40%{opacity:1;}}
+.loadbar-wrap{width:min(420px,86vw);margin-bottom:36px;z-index:2;}
+.loadbar-track{height:14px;background:rgba(166,220,242,.15);border:1px solid rgba(166,220,242,.3);border-radius:8px;overflow:hidden;position:relative;box-shadow:inset 0 1px 4px rgba(0,0,0,.4);}
+.loadbar-fill{height:100%;width:100%;background:linear-gradient(90deg,var(--plumb-dk),var(--plumb),#a6f55b,var(--plumb));background-size:200% 100%;border-radius:6px;animation:loadbar-shine 2s linear infinite;box-shadow:0 0 10px var(--plumb-glow);}
+@keyframes loadbar-shine{0%{background-position:0% 0;}100%{background-position:-200% 0;}}
+.loadbar-pct{display:flex;justify-content:space-between;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(166,220,242,.55);letter-spacing:1.5px;text-transform:uppercase;margin-top:8px;}
+.loader-scroll-hint{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(166,220,242,.55);letter-spacing:2px;text-transform:uppercase;z-index:2;animation:scroll-bob 2s ease-in-out infinite;}
+@keyframes scroll-bob{0%,100%{transform:translateX(-50%) translateY(0);opacity:.55;}50%{transform:translateX(-50%) translateY(6px);opacity:1;}}
+
+/* ============================================================
+   WELCOME RIBBON
+============================================================ */
+.ribbon{
+  background:
+    radial-gradient(ellipse at 30% 20%, rgba(124,224,61,.15) 0%, transparent 55%),
+    radial-gradient(ellipse at 70% 80%, rgba(255,45,154,.18) 0%, transparent 55%),
+    linear-gradient(135deg,#041726 0%,#072c47 50%,#0a3656 100%);
+  padding:48px 28px;
+  position:relative;
+  overflow:hidden;
+}
+.ribbon::before{
+  content:"";position:absolute;inset:0;
+  background-image:radial-gradient(circle at 1px 1px, rgba(255,255,255,.06) 1px, transparent 0);
+  background-size:24px 24px;pointer-events:none;
+}
+.ribbon-inner{
+  max-width:920px;margin:0 auto;
+  position:relative;z-index:2;
+  text-align:center;
+}
+.ribbon-text{
+  font-family:'Nunito',sans-serif;font-weight:500;
+  font-size:18px;color:rgba(255,255,255,.92);
+  line-height:1.65;letter-spacing:.1px;
+}
+.ribbon-text strong{
+  color:#fff;font-weight:700;
+}
+.ribbon-text em{
+  font-style:italic;font-weight:700;color:#fff;
+  background:linear-gradient(180deg,transparent 65%,rgba(124,224,61,.5) 65%);
+  padding:0 3px;
+}
+@media(max-width:680px){
+  .ribbon{padding:36px 22px;}
+  .ribbon-text{font-size:16px;}
+}
+
+/* ============================================================
+   MAIN PAGE
+============================================================ */
+.main{
+  background:
+    radial-gradient(ellipse at 30% 10%, rgba(166,233,255,.5) 0%, transparent 55%),
+    radial-gradient(ellipse at 80% 90%, rgba(95,200,180,.35) 0%, transparent 60%),
+    linear-gradient(180deg,#3da3d6 0%,#4fb8d8 30%,#6dcfd0 65%,#7ad8b6 100%);
+  background-attachment:fixed;
+  padding:0 24px 100px;min-height:100vh;position:relative;
+}
+.main::before{
+  content:"";position:fixed;inset:0;
+  background-image:
+    radial-gradient(circle at 8% 25%, rgba(255,255,255,.12) 0%, transparent 3%),
+    radial-gradient(circle at 18% 60%, rgba(255,255,255,.10) 0%, transparent 3%),
+    radial-gradient(circle at 32% 18%, rgba(255,255,255,.09) 0%, transparent 3%),
+    radial-gradient(circle at 6% 78%, rgba(255,255,255,.11) 0%, transparent 3%),
+    radial-gradient(circle at 90% 28%, rgba(255,255,255,.10) 0%, transparent 3%),
+    radial-gradient(circle at 82% 70%, rgba(255,255,255,.12) 0%, transparent 3%);
+  pointer-events:none;z-index:0;
+}
+.container{max-width:1180px;margin:0 auto;position:relative;z-index:1;padding-top:60px;}
+
+/* ============================================================
+   1 · CREATE-A-HOUSEMATE
+============================================================ */
+.cas-stage{
+  position:relative;border-radius:22px;margin-bottom:32px;
+  background:linear-gradient(180deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,.08) 100%);
+  backdrop-filter:blur(2px);
+  border:1.5px solid rgba(255,255,255,.35);
+  box-shadow:0 10px 30px rgba(13,92,140,.18);
+  padding:24px 32px 28px;min-height:560px;
+}
+.cas-logo{display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.cas-logo-plumb{
+  width:30px;height:30px;transform:rotate(45deg);
+  background:linear-gradient(135deg,#a6f55b 0%,#7ce03d 50%,#4fa01f 100%);
+  border-radius:4px;box-shadow:0 0 16px var(--plumb-glow),inset 0 0 8px rgba(255,255,255,.4);
+  position:relative;flex-shrink:0;
+}
+.cas-logo-plumb::before{content:"";position:absolute;inset:3px;background:linear-gradient(135deg,rgba(255,255,255,.7) 0%,transparent 50%);border-radius:3px;}
+.cas-logo-text{color:#fff;font-family:'Fredoka',sans-serif;font-weight:300;font-size:13px;line-height:1;letter-spacing:.5px;text-shadow:0 1px 2px rgba(0,0,0,.2);}
+.cas-logo-text strong{display:block;font-weight:600;font-size:22px;letter-spacing:-.3px;margin-top:-1px;color:#fff;}
+.cas-logo-text strong em{font-style:normal;color:var(--plumb);font-weight:700;}
+
+.cas-main{display:grid;grid-template-columns:1fr 320px;gap:32px;align-items:start;position:relative;}
+
+.cas-traits-col{position:relative;z-index:2;}
+.cas-traits-header{font-family:'Fredoka',sans-serif;font-weight:500;font-size:24px;color:#fff;letter-spacing:1px;text-transform:uppercase;margin-bottom:18px;text-shadow:0 2px 6px rgba(0,0,0,.15);line-height:1.2;}
+.cas-traits-title-text{white-space:nowrap;}
+.cas-traits-hint{
+  display:inline-block;font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:rgba(255,255,255,.85);
+  letter-spacing:1px;text-transform:none;font-weight:500;
+  margin-left:6px;text-shadow:0 1px 2px rgba(0,0,0,.2);
+}
+
+.cas-trait-rows{display:flex;flex-direction:column;gap:14px;}
+.cas-trait-row{display:grid;grid-template-columns:repeat(5,1fr);gap:14px;}
+.cas-trait-tile{display:flex;flex-direction:column;align-items:center;gap:6px;cursor:pointer;position:relative;}
+.cas-trait-tile-icon{
+  width:100%;aspect-ratio:1;max-width:104px;
+  background:linear-gradient(180deg,#f4fbff 0%,#dbeef7 100%);
+  border:1.5px solid rgba(13,92,140,.18);border-radius:12px;
+  display:flex;align-items:center;justify-content:center;font-size:42px;
+  box-shadow:0 2px 6px rgba(13,92,140,.18),inset 0 1px 0 rgba(255,255,255,.7);
+  transition:all .16s ease;position:relative;
+}
+.cas-trait-tile:hover .cas-trait-tile-icon{background:linear-gradient(180deg,#fff 0%,#e8f4fb 100%);transform:translateY(-2px);box-shadow:0 6px 14px rgba(13,92,140,.25),inset 0 1px 0 rgba(255,255,255,.85);}
+.cas-trait-tile.active .cas-trait-tile-icon{background:linear-gradient(180deg,#d6f5b8 0%,#a6e575 100%);border-color:var(--plumb-dk);box-shadow:0 0 0 2.5px var(--plumb),0 4px 14px rgba(124,224,61,.45),inset 0 1px 0 rgba(255,255,255,.6);}
+.cas-trait-tile-name{font-family:'Fredoka',sans-serif;font-weight:500;font-size:13px;color:#fff;letter-spacing:.2px;text-shadow:0 1px 3px rgba(0,0,0,.25);text-align:center;}
+.cas-trait-tile.active .cas-trait-tile-name{font-weight:700;}
+
+.cas-trait-empty{
+  width:100%;aspect-ratio:1;max-width:104px;
+  background:rgba(255,255,255,.5);
+  border:1.5px solid rgba(255,255,255,.6);border-radius:12px;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.8),inset 0 -1px 4px rgba(13,92,140,.08);
+}
+
+.cas-trait-close{
+  position:absolute;top:-6px;right:-6px;width:20px;height:20px;
+  background:#fff;color:var(--sims-blue-dk);border:1.5px solid rgba(13,92,140,.3);
+  border-radius:50%;display:none;align-items:center;justify-content:center;
+  font-family:'Fredoka',sans-serif;font-weight:700;font-size:13px;line-height:1;
+  cursor:pointer;z-index:5;box-shadow:0 2px 6px rgba(0,0,0,.18);padding-bottom:1px;
+}
+.cas-trait-tile.active .cas-trait-close{display:flex;}
+
+.cas-popover{
+  position:absolute;background:#fff;
+  border:1.5px solid rgba(13,92,140,.18);border-radius:10px;
+  padding:14px 16px;min-width:240px;max-width:340px;
+  box-shadow:0 12px 28px rgba(13,92,140,.3),0 4px 8px rgba(13,92,140,.15);
+  z-index:30;font-family:'Nunito',sans-serif;display:none;
+  animation:popover-in .18s ease;
+}
+.cas-popover.show{display:block;}
+@keyframes popover-in{from{opacity:0;transform:translateY(4px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);}}
+.cas-popover-name{font-family:'Fredoka',sans-serif;font-weight:700;font-size:15px;color:var(--sims-blue-dk);margin-bottom:6px;letter-spacing:.1px;}
+.cas-popover-body{font-size:13px;line-height:1.5;color:var(--ink-soft);}
+.cas-popover-body em{background:linear-gradient(180deg,transparent 60%,var(--ellen-pink-soft) 60%);font-style:normal;padding:0 2px;}
+
+/* sim column */
+.cas-sim-col{display:flex;flex-direction:column;align-items:center;position:relative;}
+.cas-sim-name{font-family:'Fredoka',sans-serif;font-weight:700;font-size:18px;letter-spacing:2px;color:#fff;text-transform:uppercase;text-align:center;margin-bottom:10px;text-shadow:0 2px 6px rgba(0,0,0,.2);}
+.cas-plumbob-floating{
+  width:28px;height:28px;transform:rotate(45deg);
+  background:linear-gradient(135deg,#a6f55b 0%,#7ce03d 50%,#4fa01f 100%);
+  border-radius:5px;
+  box-shadow:0 0 22px var(--plumb-glow),0 0 44px rgba(124,224,61,.3),inset 0 0 8px rgba(255,255,255,.45);
+  animation:plumb-float-cas 2.6s ease-in-out infinite;position:relative;margin-bottom:4px;
+}
+.cas-plumbob-floating::before{content:"";position:absolute;inset:3px;background:linear-gradient(135deg,rgba(255,255,255,.65) 0%,transparent 50%);border-radius:3px;}
+@keyframes plumb-float-cas{0%,100%{transform:rotate(45deg) translateY(0);}50%{transform:rotate(45deg) translateY(-10px);}}
+.cas-photo{
+  width:100%;max-width:280px;aspect-ratio:3/4.5;
+  background-image:url('PHOTO_PLACEHOLDER');
+  background-size:contain;background-position:center bottom;background-repeat:no-repeat;
+  filter:drop-shadow(0 18px 22px rgba(13,92,140,.45));
+}
+.cas-floor-glow{width:100%;max-width:300px;height:30px;margin-top:-12px;background:radial-gradient(ellipse,rgba(166,233,255,.7) 0%,transparent 65%);filter:blur(7px);pointer-events:none;}
+
+/* ============================================================
+   2 · TIMELINE + BIO BOX
+============================================================ */
+.row-tb{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;margin-bottom:32px;}
+
+.timeline-card{
+  background:linear-gradient(180deg,rgba(255,255,255,.95) 0%,rgba(245,253,255,.95) 100%);
+  border-radius:18px;padding:24px 28px 28px;
+  box-shadow:0 10px 28px rgba(13,92,140,.2),inset 0 1px 0 rgba(255,255,255,.8);
+  border:1.5px solid rgba(255,255,255,.5);
+}
+.tl-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sims-blue-dk);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:4px;opacity:.65;}
+.tl-title{font-family:'Fredoka',sans-serif;font-weight:600;font-size:22px;color:var(--ink);letter-spacing:-.2px;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.tl-title::before{content:"";width:14px;height:14px;background:var(--plumb);transform:rotate(45deg);border-radius:2px;box-shadow:0 0 10px var(--plumb-glow);}
+
+.tl-track-wrap{position:relative;margin:46px 6px 14px;padding:0 4px;}
+.tl-track{
+  position:relative;height:18px;
+  background:repeating-linear-gradient(90deg,rgba(13,92,140,.08) 0px,rgba(13,92,140,.08) 2px,transparent 2px,transparent 14px);
+  border-top:1.5px solid rgba(13,92,140,.18);border-bottom:1.5px solid rgba(13,92,140,.18);border-radius:3px;
+}
+.tl-fill{position:absolute;left:0;top:1px;bottom:1px;width:50%;background:linear-gradient(90deg,#a6f55b 0%,var(--plumb) 70%,var(--plumb-dk) 100%);border-radius:3px;box-shadow:0 0 14px var(--plumb-glow),inset 0 1px 0 rgba(255,255,255,.4);}
+
+.tl-marker{
+  position:absolute;top:-13px;
+  width:30px;height:30px;
+  background:linear-gradient(135deg,#a6f55b 0%,#7ce03d 50%,#4fa01f 100%);
+  border-radius:4px;
+  box-shadow:0 0 14px var(--plumb-glow),inset 0 0 6px rgba(255,255,255,.4);
+  z-index:3;
+  transform:translateX(-50%) rotate(45deg);
+  animation:marker-pulse 2s ease-in-out infinite;
+}
+.tl-marker::before{content:"";position:absolute;inset:4px;background:linear-gradient(135deg,rgba(255,255,255,.65) 0%,transparent 50%);border-radius:3px;}
+@keyframes marker-pulse{0%,100%{box-shadow:0 0 14px var(--plumb-glow),inset 0 0 6px rgba(255,255,255,.4);}50%{box-shadow:0 0 24px var(--plumb-glow),0 0 40px rgba(124,224,61,.4),inset 0 0 6px rgba(255,255,255,.4);}}
+.tl-marker-label{
+  position:absolute;top:-50px;
+  transform:translateX(-50%);
+  background:#fff;border:1.5px solid var(--plumb);
+  padding:5px 12px;border-radius:7px;
+  font-family:'Fredoka',sans-serif;font-weight:600;font-size:11px;
+  color:var(--sims-blue-dk);letter-spacing:.3px;white-space:nowrap;
+  box-shadow:0 4px 10px rgba(13,92,140,.18);z-index:4;
+}
+.tl-marker-label::after{content:"";position:absolute;bottom:-6px;left:50%;transform:translateX(-50%) rotate(45deg);width:9px;height:9px;background:#fff;border-right:1.5px solid var(--plumb);border-bottom:1.5px solid var(--plumb);}
+
+.tl-event{
+  position:absolute;top:50%;transform:translate(-50%,-50%);
+  width:11px;height:11px;background:#fff;border:2.5px solid var(--sims-blue);
+  border-radius:50%;box-shadow:0 2px 4px rgba(13,92,140,.2);z-index:2;
+}
+.tl-event.done{background:var(--plumb);border-color:var(--plumb-dk);}
+
+.tl-labels{position:relative;height:90px;margin-top:18px;}
+.tl-label{position:absolute;transform:translateX(-50%);width:130px;text-align:center;}
+.tl-label-date{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sims-blue-dk);letter-spacing:1.4px;text-transform:uppercase;font-weight:700;margin-bottom:3px;}
+.tl-label-name{font-family:'Fredoka',sans-serif;font-weight:600;font-size:13px;color:var(--ink);line-height:1.25;}
+.tl-label-sub{font-family:'Nunito',sans-serif;font-size:11px;color:var(--ink-soft);line-height:1.3;margin-top:2px;font-weight:500;}
+
+.tl-legend{display:flex;gap:18px;flex-wrap:wrap;margin-top:8px;padding-top:14px;border-top:1px dashed rgba(13,92,140,.2);font-family:'Nunito',sans-serif;font-size:12px;color:var(--ink-soft);}
+.tl-legend-item{display:flex;align-items:center;gap:6px;}
+.tl-legend-dot{width:10px;height:10px;border-radius:50%;border:2px solid var(--sims-blue);background:#fff;}
+.tl-legend-dot.done{background:var(--plumb);border-color:var(--plumb-dk);}
+.tl-legend-dot.now{background:var(--plumb);border:none;transform:rotate(45deg);border-radius:2px;box-shadow:0 0 8px var(--plumb-glow);}
+
+.tl-intro{
+  font-family:'Nunito',sans-serif;font-size:14px;
+  line-height:1.55;color:var(--ink-soft);font-weight:500;
+  margin-bottom:6px;
+  padding-bottom:14px;
+  border-bottom:1px dashed rgba(13,92,140,.18);
+}
+.tl-prefer{
+  margin-top:16px;padding:6px 2px 0;
+  font-family:'Nunito',sans-serif;font-size:13.5px;
+  line-height:1.5;color:var(--ink-soft);
+}
+.tl-prefer-key{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:var(--sims-blue-dk);letter-spacing:1.5px;
+  text-transform:uppercase;font-weight:700;
+  margin-right:8px;opacity:.75;
+}
+.tl-prefer-val{font-weight:500;}
+
+.tl-footer{
+  margin-top:18px;padding:14px 16px;
+  background:rgba(13,92,140,.04);
+  border:1px dashed rgba(13,92,140,.2);
+  border-radius:8px;
+}
+.tl-footer-key{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:var(--sims-blue-dk);letter-spacing:1.5px;
+  text-transform:uppercase;font-weight:700;margin-bottom:6px;
+  opacity:.7;
+}
+.tl-footer-val{
+  font-family:'Nunito',sans-serif;font-size:13.5px;
+  line-height:1.5;color:var(--ink-soft);font-weight:500;
+}
+.tl-footer-placeholder{
+  display:block;
+  background:repeating-linear-gradient(45deg,rgba(255,45,154,.06),rgba(255,45,154,.06) 8px,rgba(255,45,154,.02) 8px,rgba(255,45,154,.02) 16px);
+  border:1.5px dashed var(--ellen-pink);border-radius:6px;
+  padding:10px 14px;font-family:'JetBrains Mono',monospace;
+  font-size:11px;color:var(--ellen-pink);letter-spacing:.5px;
+  text-align:center;font-weight:500;text-transform:uppercase;
+}
+
+/* Bio Box */
+.bio-box{
+  background:linear-gradient(180deg,rgba(255,255,255,.95) 0%,rgba(245,253,255,.95) 100%);
+  border-radius:18px;padding:22px 26px 24px;
+  box-shadow:0 10px 28px rgba(13,92,140,.2),inset 0 1px 0 rgba(255,255,255,.8);
+  border:1.5px solid rgba(255,255,255,.5);
+}
+.bx-eyebrow{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sims-blue-dk);letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:4px;opacity:.65;}
+.bx-title{font-family:'Fredoka',sans-serif;font-weight:600;font-size:22px;color:var(--ink);letter-spacing:-.2px;margin-bottom:14px;display:flex;align-items:center;gap:10px;}
+.bx-title::before{content:"";width:14px;height:14px;background:var(--plumb);transform:rotate(45deg);border-radius:2px;box-shadow:0 0 10px var(--plumb-glow);}
+.bx-list{display:flex;flex-direction:column;gap:8px;}
+.bx-row{display:grid;grid-template-columns:90px 1fr;gap:10px;font-family:'Nunito',sans-serif;font-size:13.5px;padding:5px 0;border-bottom:1px dashed rgba(13,92,140,.12);}
+.bx-row:last-child{border-bottom:none;}
+.bx-row.bx-row-pair{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.bx-pair{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;}
+.bx-row-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sims-blue-dk);letter-spacing:1.2px;text-transform:uppercase;font-weight:700;align-self:center;opacity:.75;}
+.bx-row-val{color:var(--ink);font-weight:600;line-height:1.35;}
+.bx-row-val small{display:block;font-weight:500;color:var(--ink-soft);font-size:12px;margin-top:3px;line-height:1.4;}
+
+/* ============================================================
+   3 · LETTER (full width)
+============================================================ */
+.letter-card{
+  background:linear-gradient(180deg,#fff 0%,#fffaf0 100%);
+  border-radius:20px;padding:48px 60px;margin-bottom:32px;
+  box-shadow:0 14px 40px rgba(13,92,140,.25),inset 0 1px 0 rgba(255,255,255,.6);
+  border:1.5px solid rgba(255,255,255,.5);position:relative;
+}
+.lt-eyebrow{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sims-blue-dk);letter-spacing:2.5px;text-transform:uppercase;margin-bottom:10px;font-weight:700;display:flex;align-items:center;gap:10px;}
+.lt-eyebrow::before{content:"";width:11px;height:11px;background:var(--plumb);transform:rotate(45deg);border-radius:1.5px;box-shadow:0 0 8px var(--plumb-glow);}
+.lt-greeting{font-family:'Fredoka',sans-serif;font-weight:500;font-size:38px;color:var(--ink);margin-bottom:30px;letter-spacing:-.5px;line-height:1.1;padding-bottom:24px;border-bottom:1px dashed rgba(13,92,140,.2);}
+.lt-meta{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--sims-blue-dk);letter-spacing:1.5px;text-transform:uppercase;margin-bottom:30px;display:flex;gap:12px;flex-wrap:wrap;padding-bottom:24px;border-bottom:1px dashed rgba(13,92,140,.2);}
+.lt-meta span{background:var(--ellen-cyan);padding:4px 10px;border-radius:5px;font-weight:700;}
+.lt-prose p{font-family:'Nunito',sans-serif;font-size:16px;line-height:1.75;color:var(--ink-soft);margin-bottom:18px;}
+.lt-prose p:last-child{margin-bottom:0;}
+.lt-prose em{font-style:italic;color:var(--ink);font-weight:600;}
+.lt-prose .lt-quote{
+  font-style:italic;font-weight:700;
+  color:var(--ellen-pink);
+}
+.lt-prose .lt-greeting-line{
+  font-family:'Fredoka',sans-serif;font-weight:500;
+  font-size:22px;color:var(--ink);
+  margin-bottom:14px;letter-spacing:-.2px;
+}
+.lt-prose .lt-signoff{
+  font-family:'Fredoka',sans-serif;font-weight:500;
+  font-size:22px;color:var(--ink);
+  margin-top:14px;letter-spacing:-.2px;
+}
+.lt-prose .plchldr{
+  display:block;
+  background:#fafdff;
+  border:1.5px dashed rgba(13,92,140,.3);border-radius:8px;padding:24px 22px;
+  font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--sims-blue-dk);
+  letter-spacing:.5px;text-align:center;font-weight:500;text-transform:uppercase;margin-bottom:0;
+  opacity:.75;
+}
+.lt-sign{margin-top:34px;padding-top:22px;border-top:1px dashed rgba(13,92,140,.25);display:flex;justify-content:space-between;align-items:flex-end;flex-wrap:wrap;gap:14px;}
+.lt-sign-from{font-family:'Fredoka',sans-serif;font-size:20px;font-weight:500;color:var(--ink);}
+.lt-sign-meta{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sims-blue-dk);letter-spacing:1.5px;text-transform:uppercase;opacity:.65;}
+
+/* ============================================================
+   4 · EXPANSION PACKS + MOTHERLODE
+============================================================ */
+.row-em{display:grid;grid-template-columns:1fr 280px;gap:24px;margin-bottom:30px;}
+
+.exp-card{
+  background:linear-gradient(180deg,rgba(255,255,255,.18) 0%,rgba(255,255,255,.08) 100%);
+  backdrop-filter:blur(2px);
+  border:1.5px solid rgba(255,255,255,.35);border-radius:18px;
+  padding:24px 28px 28px;box-shadow:0 10px 28px rgba(13,92,140,.18);
+}
+.exp-title{font-family:'Fredoka',sans-serif;font-weight:600;font-size:26px;color:#fff;letter-spacing:.5px;text-transform:uppercase;margin-bottom:18px;text-shadow:0 2px 6px rgba(0,0,0,.18);}
+.rdam-4-green{
+  color:var(--plumb);font-weight:700;font-style:normal;
+  text-shadow:0 0 12px rgba(124,224,61,.4),0 2px 6px rgba(0,0,0,.18);
+}
+.exp-head{
+  margin-bottom:22px;
+  display:flex;flex-direction:column;gap:8px;
+}
+.exp-head .exp-title{margin-bottom:0;}
+.exp-intro{
+  font-family:'Nunito',sans-serif;font-weight:500;
+  font-size:14.5px;color:rgba(255,255,255,.92);
+  line-height:1.6;
+  text-shadow:0 1px 2px rgba(0,0,0,.15);
+}
+.exp-intro a{
+  color:#fff;text-decoration:none;
+  background:linear-gradient(180deg,transparent 65%,rgba(255,45,154,.6) 65%);
+  padding:0 3px;transition:background .15s;
+}
+.exp-intro a:hover{
+  background:linear-gradient(180deg,transparent 0%,rgba(255,45,154,.6) 0%);
+}
+.exp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;}
+.exp-pack{
+  position:relative;aspect-ratio:3/4;
+  border-radius:14px;overflow:hidden;cursor:pointer;
+  background:linear-gradient(180deg,#ff6cb8 0%,#ff2d9a 60%,#d8157d 100%);
+  padding:6px 6px 0;
+  box-shadow:0 8px 20px rgba(255,45,154,.4),inset 0 1px 0 rgba(255,255,255,.35);
+  transition:all .2s ease;
+  display:flex;flex-direction:column;
+}
+.exp-pack:hover{transform:translateY(-4px);box-shadow:0 14px 28px rgba(255,45,154,.55),inset 0 1px 0 rgba(255,255,255,.45);}
+.exp-pack-photo{
+  flex:1;
+  background:#fff;
+  border-radius:9px 9px 0 0;
+  display:flex;align-items:center;justify-content:center;
+  position:relative;
+  overflow:hidden;
+  box-shadow:inset 0 1px 4px rgba(13,92,140,.08);
+}
+.exp-pack-img{
+  width:100%;height:100%;
+  object-fit:cover;
+  display:block;
+}
+.exp-pack-num{
+  position:absolute;top:8px;left:10px;
+  font-family:'Fredoka',sans-serif;font-weight:700;font-size:11px;
+  color:#fff;letter-spacing:1.5px;
+  background:rgba(255,45,154,.92);
+  padding:3px 8px;border-radius:4px;
+  z-index:3;
+  box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+.exp-pack-photo-hint{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  color:rgba(13,92,140,.4);letter-spacing:1.5px;
+  text-transform:uppercase;text-align:center;line-height:1.5;font-weight:600;
+}
+.exp-pack-content{
+  padding:12px 12px 14px;
+  color:#fff;text-align:center;
+}
+.exp-pack-eyebrow{
+  font-family:'JetBrains Mono',monospace;font-size:9px;
+  letter-spacing:1.5px;text-transform:uppercase;
+  opacity:.85;margin-bottom:5px;
+}
+.exp-pack-name{
+  font-family:'Fredoka',sans-serif;font-weight:700;
+  font-size:17px;letter-spacing:.1px;line-height:1.15;
+  text-shadow:0 1px 3px rgba(0,0,0,.25);
+}
+
+/* Motherlode card */
+.ml-card{
+  background:rgba(255,255,255,.18);
+  backdrop-filter:blur(4px);
+  border-radius:18px;padding:0;
+  box-shadow:0 10px 28px rgba(13,92,140,.18),inset 0 1px 0 rgba(255,255,255,.4);
+  overflow:hidden;border:1.5px solid rgba(255,255,255,.55);cursor:pointer;
+  transition:all .2s ease;position:relative;
+}
+.ml-card:hover{
+  transform:translateY(-3px);
+  background:rgba(255,255,255,.25);
+  box-shadow:0 16px 36px rgba(13,92,140,.28),0 0 0 2px var(--plumb),inset 0 1px 0 rgba(255,255,255,.5);
+}
+.ml-tree-frame{aspect-ratio:1/1.05;background:linear-gradient(180deg,#ffffff 0%,#f4fbff 100%);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;border-bottom:1.5px solid rgba(255,255,255,.5);}
+.ml-tree{
+  width:78%;height:88%;
+  background-image:url('PHOTO_PLACEHOLDER');
+   background-size:contain;background-position:center;background-repeat:no-repeat;
+  filter:drop-shadow(0 6px 16px rgba(13,92,140,.2));
+}
+.ml-cheat{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--plumb-dk);letter-spacing:1.8px;background:rgba(255,255,255,.9);padding:5px 12px;border-radius:5px;border:1px solid rgba(124,224,61,.5);z-index:2;font-weight:700;white-space:nowrap;box-shadow:0 2px 6px rgba(13,92,140,.1);}
+.ml-blink{display:inline-block;width:6px;height:13px;background:var(--plumb-dk);margin-left:3px;vertical-align:-2px;animation:blink 1s steps(2) infinite;}
+@keyframes blink{50%{opacity:0;}}
+.ml-label{padding:16px 16px 18px;text-align:center;}
+.ml-sub{font-family:'Fredoka',sans-serif;font-weight:600;font-size:15px;color:#fff;letter-spacing:.3px;text-shadow:0 2px 6px rgba(0,0,0,.2);text-transform:uppercase;}
+.ml-cta{display:inline-block;margin-top:10px;font-family:'JetBrains Mono',monospace;font-size:9px;color:#fff;background:rgba(124,224,61,.25);border:1px solid rgba(124,224,61,.55);padding:5px 10px;border-radius:5px;letter-spacing:1.4px;text-transform:uppercase;font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.2);}
+
+/* Modal */
+.ml-modal-bg{
+  position:fixed;inset:0;background:rgba(13,46,72,.55);
+  backdrop-filter:blur(8px);z-index:200;
+  display:none;align-items:center;justify-content:center;padding:20px;
+}
+.ml-modal-bg.show{display:flex;animation:fade-in .2s ease;}
+@keyframes fade-in{from{opacity:0;}to{opacity:1;}}
+.ml-modal{
+  background:linear-gradient(180deg,#fff 0%,#f7fcff 100%);
+  border:1.5px solid rgba(255,255,255,.8);border-radius:20px;
+  padding:36px 40px;max-width:600px;width:100%;max-height:90vh;overflow-y:auto;
+  position:relative;
+  box-shadow:0 24px 60px rgba(13,92,140,.4),0 0 0 1px rgba(166,220,242,.4),inset 0 1px 0 rgba(255,255,255,.8);
+  animation:modal-in .25s ease;
+}
+@keyframes modal-in{from{opacity:0;transform:scale(.95) translateY(10px);}to{opacity:1;transform:scale(1) translateY(0);}}
+.ml-modal-close{
+  position:absolute;top:14px;right:14px;width:32px;height:32px;
+  background:rgba(13,92,140,.06);border:1px solid rgba(13,92,140,.2);
+  color:var(--sims-blue-dk);border-radius:50%;cursor:pointer;font-size:18px;font-weight:700;
+  display:flex;align-items:center;justify-content:center;transition:all .15s;
+  line-height:1;padding-bottom:2px;
+}
+.ml-modal-close:hover{background:rgba(255,45,154,.15);border-color:var(--ellen-pink);color:var(--ellen-pink);}
+.ml-modal-cheat{
+  display:inline-block;
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--plumb-dk);letter-spacing:1.8px;
+  background:rgba(124,224,61,.12);border:1px solid rgba(124,224,61,.4);
+  padding:5px 12px;border-radius:5px;
+  margin-bottom:14px;text-transform:uppercase;font-weight:700;
+}
+.ml-modal-title{font-family:'Fredoka',sans-serif;font-weight:600;font-size:30px;color:var(--ink);margin-bottom:6px;letter-spacing:-.3px;}
+.ml-modal-sub{font-family:'Nunito',sans-serif;font-size:14.5px;color:var(--ink-soft);margin-bottom:24px;line-height:1.55;padding-bottom:20px;border-bottom:1px dashed rgba(13,92,140,.18);}
+.ml-modal-banner{
+  font-family:'Fredoka',sans-serif;font-weight:700;
+  font-size:15.5px;color:var(--ellen-pink);
+  background:rgba(255,45,154,.08);
+  border:1.5px solid rgba(255,45,154,.35);
+  border-radius:8px;
+  padding:11px 14px;
+  margin-bottom:18px;
+  text-align:center;
+  letter-spacing:.1px;
+  line-height:1.3;
+}
+.ml-modal-list{display:flex;flex-direction:column;gap:12px;}
+.ml-modal-item{
+  background:rgba(166,233,255,.18);
+  border:1px solid rgba(13,92,140,.12);
+  border-left:3px solid var(--plumb);
+  border-radius:8px;padding:14px 16px;
+}
+.ml-modal-item-key{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--sims-blue-dk);letter-spacing:1.5px;text-transform:uppercase;font-weight:700;margin-bottom:5px;}
+.ml-modal-item-val{font-family:'Nunito',sans-serif;font-size:14px;color:var(--ink);line-height:1.55;font-weight:500;}
+
+.ml-history{
+  margin-top:24px;
+  padding-top:22px;
+  border-top:1px dashed rgba(13,92,140,.2);
+}
+.ml-history-head{
+  display:flex;justify-content:space-between;align-items:flex-start;
+  flex-wrap:wrap;gap:10px;
+  margin-bottom:12px;
+}
+.ml-history-title{
+  font-family:'Fredoka',sans-serif;font-weight:600;font-size:16px;
+  color:var(--ink);letter-spacing:-.1px;
+  display:flex;align-items:center;gap:8px;
+}
+.ml-history-title::before{
+  content:"";width:10px;height:10px;
+  background:var(--plumb);transform:rotate(45deg);
+  border-radius:1.5px;box-shadow:0 0 8px var(--plumb-glow);
+}
+.ml-history-note{
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  color:var(--sims-blue-dk);letter-spacing:1px;
+  text-transform:uppercase;font-weight:600;
+  text-align:right;line-height:1.5;opacity:.7;
+}
+.ml-history-table{
+  background:rgba(166,233,255,.18);
+  border:1px solid rgba(13,92,140,.12);
+  border-radius:8px;
+  overflow:hidden;
+}
+.ml-history-row{
+  display:grid;
+  grid-template-columns:1.4fr 1fr 1fr 1.4fr;
+  gap:8px;
+  padding:9px 14px;
+  font-family:'Nunito',sans-serif;font-size:13px;
+  color:var(--ink);font-weight:500;
+  border-bottom:1px solid rgba(13,92,140,.08);
+  align-items:center;
+}
+.ml-history-row:last-child{border-bottom:none;}
+.ml-history-row:nth-child(even){background:rgba(255,255,255,.4);}
+.ml-history-header{
+  background:rgba(13,92,140,.08) !important;
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  color:var(--sims-blue-dk);letter-spacing:1.4px;
+  text-transform:uppercase;font-weight:700;
+}
+.ml-history-source{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:var(--sims-blue-dk);letter-spacing:.5px;
+  text-align:right;
+  text-transform:uppercase;font-weight:600;
+  opacity:.85;
+}
+.ml-history-row .ml-history-benefit{
+  opacity:1;
+}
+@media(max-width:520px){
+  .ml-history-row{grid-template-columns:1.2fr .9fr .9fr 1.3fr;font-size:11.5px;padding:8px 10px;gap:6px;}
+  .ml-history-source{font-size:9px;}
+}
+
+/* ============================================================
+   FOOTER
+============================================================ */
+.foot{text-align:center;font-family:'JetBrains Mono',monospace;font-size:10px;color:rgba(255,255,255,.65);letter-spacing:2px;text-transform:uppercase;padding:30px 20px 0;text-shadow:0 1px 2px rgba(13,92,140,.3);}
+
+/* ============================================================
+   NEW LAYOUT (3-col CAS · full-width packs · timeline+ml row)
+============================================================ */
+/* CAS · 3 columns: traits | sim | bio */
+.cas-main-3col{grid-template-columns:.85fr 320px 1.25fr;}
+
+/* trait grid in 3 columns */
+.cas-trait-row-3{grid-template-columns:repeat(3,1fr);}
+.cas-trait-row-2{grid-template-columns:repeat(2,1fr);}
+.cas-main-3col .cas-trait-row-2{justify-items:center;gap:16px;}
+.cas-main-3col .cas-trait-tile-icon{max-width:64px;width:64px;font-size:28px;border-radius:9px;}
+.cas-main-3col .cas-trait-empty{max-width:64px;width:64px;border-radius:9px;}
+.cas-main-3col .cas-trait-row-3{justify-items:center;}
+.cas-main-3col .cas-trait-tile-name{font-size:11.5px;}
+
+/* sim col tighter when sandwiched in middle */
+.cas-main-3col .cas-sim-col{padding-top:8px;}
+.cas-main-3col .cas-photo{max-width:360px;}
+
+/* bio inside the CAS stage — translucent card so it sits on the blue */
+.bio-box-inline{
+  background:transparent;
+  border-radius:14px;padding:20px 22px 22px;
+  border:1.5px solid rgba(255,255,255,.55);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.2);
+  align-self:start;
+}
+.bio-box-inline .bx-title{font-size:20px;color:#fff;text-shadow:0 2px 6px rgba(0,0,0,.18);}
+.bio-box-inline .bx-row{font-size:13px;padding:6px 0;gap:8px;grid-template-columns:80px 1fr;border-bottom:1px dashed rgba(255,255,255,.25);}
+.bio-box-inline .bx-row.bx-row-pair{grid-template-columns:1.6fr 1fr;gap:14px;}
+.bio-box-inline .bx-row-key{font-size:9.5px;color:rgba(255,255,255,.85);opacity:1;}
+.bio-box-inline .bx-row-val{font-size:13px;color:#fff;}
+.bio-box-inline .bx-row-val small{font-size:11.5px;color:rgba(255,255,255,.75);}
+
+/* expansion packs: full width with larger tiles */
+.exp-card-full{margin-bottom:32px;}
+.exp-card-full .exp-grid{grid-template-columns:repeat(3,1fr);gap:18px;}
+.exp-card-full .exp-pack{aspect-ratio:auto;}
+.exp-card-full .exp-pack-photo{aspect-ratio:1/1;flex:none;}
+.exp-card-full .exp-pack-name{font-size:20px;}
+
+/* Compact clickable motherlode card (no picture) */
+.ml-card-compact{
+  padding:22px 20px 22px;
+  text-align:center;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+  background:rgba(255,255,255,.22);
+}
+.ml-card-compact .ml-compact-cheat{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--plumb-dk);letter-spacing:1.8px;
+  background:rgba(255,255,255,.92);
+  padding:5px 12px;border-radius:5px;
+  border:1px solid rgba(124,224,61,.55);
+  font-weight:700;white-space:nowrap;
+  box-shadow:0 2px 6px rgba(13,92,140,.1);
+  margin-bottom:4px;
+}
+.ml-card-compact .ml-compact-title{
+  font-family:'Fredoka',sans-serif;font-weight:700;
+  font-size:18px;color:#fff;letter-spacing:.3px;
+  text-shadow:0 2px 6px rgba(0,0,0,.22);
+  text-transform:uppercase;line-height:1.1;
+}
+.ml-card-compact .ml-compact-sub{
+  font-family:'Nunito',sans-serif;font-size:12.5px;
+  color:rgba(255,255,255,.85);
+  line-height:1.4;font-weight:500;
+  text-shadow:0 1px 2px rgba(0,0,0,.15);
+  max-width:200px;
+}
+.ml-card-compact .ml-compact-cta{
+  margin-top:6px;
+  font-family:'JetBrains Mono',monospace;font-size:9.5px;
+  color:#fff;background:rgba(124,224,61,.3);
+  border:1px solid rgba(124,224,61,.65);
+  padding:6px 12px;border-radius:5px;
+  letter-spacing:1.5px;text-transform:uppercase;
+  font-weight:700;text-shadow:0 1px 2px rgba(0,0,0,.2);
+}
+
+/* timeline + motherlode row */
+.row-tm{
+  display:grid;
+  grid-template-columns:3.4fr 1fr;
+  gap:24px;
+  margin-bottom:30px;
+  align-items:start;
+}
+/* motherlode: compact clickable box, no photo */
+.row-tm .ml-card{
+  display:flex;flex-direction:column;
+  align-self:start;
+}
+
+/* ============================================================
+   RESPONSIVE
+============================================================ */
+@media(max-width:1100px){
+  .cas-main-3col{grid-template-columns:.85fr 260px 1.25fr;}
+  .cas-main-3col .cas-photo{max-width:280px;}
+}
+@media(max-width:980px){
+  /* CAS stacks: traits → sim → bio */
+  .cas-main, .cas-main-3col{grid-template-columns:1fr;}
+  .cas-sim-col{margin-top:20px;max-width:340px;margin-left:auto;margin-right:auto;}
+  .cas-main-3col .cas-photo{max-width:280px;}
+  .bio-box-inline{margin-top:24px;}
+  /* timeline + ml stack */
+  .row-tm{grid-template-columns:1fr;}
+  .row-tm .ml-card{max-width:340px;margin:0 auto;}
+  .letter-card{padding:32px 28px;}
+  .lt-greeting{font-size:30px;}
+  .cas-trait-tile-icon{font-size:32px;}
+  .exp-card-full .exp-grid{grid-template-columns:1fr;gap:16px;}
+  .exp-card-full .exp-pack{aspect-ratio:auto;max-width:340px;margin:0 auto;width:100%;}
+  .cas-popover{position:fixed;left:20px;right:20px;bottom:20px;top:auto;max-width:none;z-index:100;}
+  .tl-track-wrap{margin:36px 6px 14px;}
+  .tl-labels{height:auto;display:flex;flex-direction:column;gap:14px;margin-top:24px;}
+  .tl-label{position:static;transform:none;width:auto;text-align:left;padding-left:14px;border-left:2px solid var(--plumb);}
+}
+@media(max-width:560px){
+  .cas-stage{padding:18px 18px 20px;}
+  .cas-traits-header{font-size:22px;}
+  .cas-trait-row-3{gap:8px;}
+  .cas-trait-tile-name{font-size:11px;}
+  .cas-trait-tile-icon{font-size:26px;border-radius:8px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     LOADING SCREEN HERO
+============================================================ -->
+<section class="loader">
+  <div class="plumbob-stage">
+    <div class="plumbob"></div>
+    <div class="plumbob-shadow"></div>
+  </div>
+
+  <div class="loader-logo">
+    <span class="loader-logo-the">the</span><strong>RDAM<em>'4</em></strong>
+  </div>
+
+  <h1 class="loader-title">
+    <span class="green">Cami</span> wants to join<br>
+    <span class="pink">Ellen's RDAM house</span>
+  </h1>
+
+  <div class="loader-welcome">
+    Welcome to <em>theRDAM'4</em> and my application to your beautiful Rotterdam house. Your house listing made me smile so much that I wanted my application to (hopefully) do the same for you. <strong>Click around to get to know me in different ways.</strong>
+  </div>
+
+  <div class="loader-sub">
+    Loading application<span class="dot">.</span><span class="dot">.</span><span class="dot">.</span>
+  </div>
+
+  <div class="loadbar-wrap">
+    <div class="loadbar-track"><div class="loadbar-fill"></div></div>
+    <div class="loadbar-pct"><span>Initialising household</span><span>97%</span></div>
+  </div>
+
+  <div class="loader-scroll-hint">↓ scroll to continue</div>
+</section>
+
+
+<!-- ============================================================
+     MAIN
+============================================================ -->
+<main class="main">
+<div class="container">
+
+  <!-- 1 · CREATE-A-HOUSEMATE (3 columns: traits · sim · bio) -->
+  <div class="cas-stage">
+
+    <div class="cas-logo">
+      <div class="cas-logo-plumb"></div>
+      <div class="cas-logo-text">the<strong>RDAM<em>'4</em></strong></div>
+    </div>
+
+    <div class="cas-main cas-main-3col">
+
+      <!-- LEFT: traits (3x3) -->
+      <div class="cas-traits-col">
+        <div class="cas-traits-header"><span class="cas-traits-title-text">Get to know my traits</span> <span class="cas-traits-hint">(click a trait to know more)</span></div>
+
+        <div class="cas-trait-rows">
+          <div class="cas-trait-row cas-trait-row-2">
+            <div class="cas-trait-tile" data-trait="creative">
+              <div class="cas-trait-tile-icon">🎨<span class="cas-trait-close">×</span></div>
+              <div class="cas-trait-tile-name">Creative</div>
+            </div>
+            <div class="cas-trait-tile" data-trait="calm">
+              <div class="cas-trait-tile-icon">🔋<span class="cas-trait-close">×</span></div>
+              <div class="cas-trait-tile-name">Calm</div>
+            </div>
+          </div>
+          <div class="cas-trait-row cas-trait-row-2">
+            <div class="cas-trait-tile" data-trait="queer">
+              <div class="cas-trait-tile-icon">🏳️‍🌈<span class="cas-trait-close">×</span></div>
+              <div class="cas-trait-tile-name">Queer</div>
+            </div>
+            <div class="cas-trait-tile" data-trait="passion">
+              <div class="cas-trait-tile-icon">🧠<span class="cas-trait-close">×</span></div>
+              <div class="cas-trait-tile-name">Passionate</div>
+            </div>
+          </div>
+          <div class="cas-trait-row cas-trait-row-2">
+            <div class="cas-trait-tile" data-trait="caring">
+              <div class="cas-trait-tile-icon">💖<span class="cas-trait-close">×</span></div>
+              <div class="cas-trait-tile-name">Caring</div>
+            </div>
+            <div class="cas-trait-tile" data-trait="curious">
+              <div class="cas-trait-tile-icon">🌍<span class="cas-trait-close">×</span></div>
+              <div class="cas-trait-tile-name">Curious</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cas-popover" id="traitPopover">
+          <div class="cas-popover-name" id="popoverName">Trait</div>
+          <div class="cas-popover-body" id="popoverBody">Description</div>
+        </div>
+      </div>
+
+      <!-- MIDDLE: sim photo -->
+      <div class="cas-sim-col">
+        <div class="cas-plumbob-floating"></div>
+        <div class="cas-photo"></div>
+        <div class="cas-floor-glow"></div>
+      </div>
+
+      <!-- RIGHT: bio -->
+      <div class="bio-box bio-box-inline">
+        <div class="bx-title">Bio</div>
+        <div class="bx-list">
+          <div class="bx-row bx-row-pair">
+            <div class="bx-pair">
+              <div class="bx-row-key">Name</div>
+              <div class="bx-row-val">Cami Christensen</div>
+            </div>
+            <div class="bx-pair">
+              <div class="bx-row-key">Age</div>
+              <div class="bx-row-val">29</div>
+            </div>
+          </div>
+          <div class="bx-row bx-row-pair">
+            <div class="bx-pair">
+              <div class="bx-row-key">Pronouns</div>
+              <div class="bx-row-val">she / her</div>
+            </div>
+            <div class="bx-pair">
+              <div class="bx-row-key">Nationality</div>
+              <div class="bx-row-val">Danish</div>
+            </div>
+          </div>
+          <div class="bx-row">
+            <div class="bx-row-key">Languages</div>
+            <div class="bx-row-val">
+              Danish, English, Norwegian
+              <small>+ a bit of Swedish, German · planning to learn Dutch</small>
+            </div>
+          </div>
+          <div class="bx-row">
+            <div class="bx-row-key">Education</div>
+            <div class="bx-row-val">
+              MSc Human Resource Management with special focus on diversity &amp; inclusion at workplaces
+              <small>+ BSc Business Administration &amp; Psychology</small>
+            </div>
+          </div>
+          <div class="bx-row"><div class="bx-row-key">What else</div><div class="bx-row-val">queer · ADHD · non-smoker · no pets</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- 2 · LETTER -->
+  <div class="letter-card">
+    <div class="lt-eyebrow">Letter · Application</div>
+
+    <div class="lt-prose">
+      <p class="lt-greeting-line">Dear Ellen,</p>
+
+      <p>Once again, welcome to this application and thank you for taking the time to read it. Your listing made it really clear that you're someone who cares deeply, and my first thought was honestly <span class="lt-quote">"oh, she sounds lovely, I'd love to get to know her."</span> So let me try to put into words who I am, to give you a better sense of who I'd be as a housemate ...</p>
+
+      <p>I'm creative at heart and a deeply caring person, about the people in my life, about the planet, about doing the small things that make others feel seen. I'm queer, I'm endlessly curious about art, music, ideas, languages and the way other people see the world, and I genuinely love learning new things, talking about them, and helping where I can. I have a lot of creative hobbies such as sewing, drawing and DIY-projects that are my way of recharging, getting out of my head and feel good. That being said I of course don't plan to build or do anything without consent, just to be clear. For me, my home is where I recharge, so I really value it being a calm, peaceful place. Somewhere I look forward to coming back to, and somewhere I take care of properly.</p>
+
+      <p>Right now I am physically in Copenhagen wrapping my life up until I move to the Netherlands at the start of May. I've lived in the Netherlands three times before, including eight months in Rotterdam on exchange at RSM, and over the years I've built a network here of both internationals and Dutch friends who feel like chosen family, and they are the main reason I am now relocating permanently to the Netherlands. Coming to Rotterdam feels like coming home, and I'm planning to stay long-term. This isn't a let's-try-it-out-move for me, it's more of a homecoming. I have a temporary place lined up at a friend's house, but I'm looking for a place to move into during May. (I can pay from May 5th, no problem).</p>
+
+      <p>As you maybe can imagine, moving abroad is not just an easy fix and right now I'm in the slightly chaotic in-between of a big move but this is something I have planned for a long time. In the beginning of this year, I finished my master's in human resource management at Copenhagen Business School. Even though studying at the echo chamber of Scandinavian finance bros may seem a bit off-brand, I like to see it myself as smashing the patriarchy from within, haha! The past year of my masters degree, I did a deep dive into the topic of inclusion of neurodivergent employees in office work to better understand how workplaces can be more inclusive, using theory about ableism and minority stress theory. This is a topic I could talk about for a long time so I will stop myself here, but it's safe to say that I am also always up for an interesting talk about similar topics. Ideally, diversity and inclusion is the work I want to spend my life on and what I am very passionate about.</p>
+
+      <p>My days at the moment are a mix of wrapping up my life in CPH, last coffees with friends here, and a sewing project I keep promising myself I'll finish before the move haha! My flight is scheduled to land in Schiphol on May 4th at 17:00 so I am available for online viewings all day during May 3rd or in person on May 4th in the evening. So where do I see myself in 3 months? By the end of July, I hope my mornings start with coffee, and that I am either settled into an HR role or similar and I dream about being able to come home to a place that is quiet, and where I can feel at peace, contribute to having a nice home and be around a creative and open person such as yourself to continue growing and learning and exploring in life!</p>
+
+      <p>I'm someone who deeply understands that people live and do things differently. I've spent a long time, both academically and personally, thinking about that. All I ask in return is honest, clear communication and genuine respect, and I'll bring the same. I think the small everyday things, like saying when something's bothering you, being considerate around quiet hours, and sharing the cleaning without keeping score, are what make a shared home feel safe rather than tense.</p>
+
+      <p>Thank you for writing such a thoughtful ad, by the way. That kind of care is rare, and it really does make a difference. I'd love to be invited to see the place either online or in person and answer any questions you might have.</p>
+
+      <p class="lt-signoff">– Cami 🌱</p>
+    </div>
+  </div>
+
+
+  <!-- 3 · EXPANSION PACKS (full width) -->
+  <div class="exp-card exp-card-full">
+    <div class="exp-head">
+      <div class="exp-title">Available Expansion Packs to the RDAM<span class="rdam-4-green">'4</span></div>
+      <div class="exp-intro">Besides the original RDAM<span class="rdam-4-green">'4</span>, the following will be part of the package when choosing Cami as your housemate (in other words: some sides of me that don't fit in the bio, told in pictures). If you'd like to see more, my Instagram is <a href="https://instagram.com/camichr" target="_blank" rel="noopener"><strong>@camichr</strong></a>.</div>
+    </div>
+    <div class="exp-grid">
+      <div class="exp-pack">
+        <div class="exp-pack-photo">
+            <img class="exp-pack-img" src="PHOTO_PLACEHOLDER">
+			            <div class="exp-pack-num">EP01</div>
+          </div>
+        <div class="exp-pack-content">
+          <div class="exp-pack-eyebrow">Pack 1 of 3</div>
+          <div class="exp-pack-name">DIY 💪</div>
+        </div>
+      </div>
+      <div class="exp-pack">
+        <div class="exp-pack-photo">
+            <img class="exp-pack-img" src="PHOTO_PLACEHOLDER">
+			            <div class="exp-pack-num">EP02</div>
+          </div>
+        <div class="exp-pack-content">
+          <div class="exp-pack-eyebrow">Pack 2 of 3</div>
+          <div class="exp-pack-name">Community 🌈</div>
+        </div>
+      </div>
+      <div class="exp-pack">
+        <div class="exp-pack-photo">
+            <img class="exp-pack-img" src="PHOTO_PLACEHOLDER">
+			            <div class="exp-pack-num">EP03</div>
+          </div>
+        <div class="exp-pack-content">
+          <div class="exp-pack-eyebrow">Pack 3 of 3</div>
+          <div class="exp-pack-name">In motion 🌊</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- 4 · TIMELINE + MOTHERLODE -->
+  <div class="row-tm">
+
+    <div class="timeline-card">
+      <div class="tl-title">My timeline and availability</div>
+      <div class="tl-intro">I am right now wrapping up the last things in Copenhagen, but flights are already booked to arrive in the Netherlands on may 4th and my stuff is already at a friends house in the Netherlands.</div>
+
+      <div class="tl-track-wrap">
+        <div class="tl-track"><div class="tl-fill"></div></div>
+
+        <div class="tl-marker-label" style="left:54%;">📍 4 May · landing day</div>
+        <div class="tl-marker" style="left:54%;"></div>
+
+        <div class="tl-labels">
+          <div class="tl-label" style="left:7%;">
+            <div class="tl-label-date">Now → 4 May</div>
+            <div class="tl-label-name">In Copenhagen 🇩🇰</div>
+            <div class="tl-label-sub">online viewings possible</div>
+          </div>
+          <div class="tl-label" style="left:30%;">
+            <div class="tl-label-date">Sun · 3 May</div>
+            <div class="tl-label-name">Online viewing</div>
+            <div class="tl-label-sub">available all day</div>
+          </div>
+          <div class="tl-label" style="left:54%;">
+            <div class="tl-label-date">Mon · 4 May</div>
+            <div class="tl-label-name">✈️ Land in NL</div>
+            <div class="tl-label-sub">I land in NL at 17:00. Available in-person after 18:30</div>
+          </div>
+          <div class="tl-label" style="left:74%;">
+            <div class="tl-label-date">Tue · 5 May</div>
+            <div class="tl-label-name">Available in person</div>
+            <div class="tl-label-sub">can sign and pay that day</div>
+          </div>
+          <div class="tl-label" style="left:93%;">
+            <div class="tl-label-date">From May 6th and beyond</div>
+            <div class="tl-label-name">🏡 Flexible move in</div>
+            <div class="tl-label-sub">can adapt to your schedule</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-prefer">
+        <span class="tl-prefer-key">Preferred period:</span>
+        <span class="tl-prefer-val">My ideal period is as long as possible / as you are comfortable committing to.</span>
+      </div>
+    </div>
+
+    <div class="ml-card ml-card-compact" id="mlCard">
+      <div class="ml-compact-cheat">#motherlode …<span class="ml-blink"></span></div>
+      <div class="ml-compact-title">Income &amp; Finances</div>
+      <div class="ml-compact-sub">Click to open the full breakdown</div>
+      <div class="ml-compact-cta">› click to view</div>
+    </div>
+
+  </div>
+
+
+  <div class="foot">Sims-inspired application · Designed for Ellen · April 2026 · Made with care</div>
+
+</div>
+</main>
+
+
+<!-- MOTHERLODE MODAL -->
+<div class="ml-modal-bg" id="mlModalBg">
+  <div class="ml-modal">
+    <button class="ml-modal-close" id="mlModalClose">×</button>
+    <div class="ml-modal-cheat">#motherlode …<span class="ml-blink"></span></div>
+    <div class="ml-modal-title">Income &amp; Finances</div>
+    <div class="ml-modal-banner">Dutch bank account and BSN number already in place</div>
+    <div class="ml-modal-sub">Full disclosure: since I'm currently in the middle of relocating, I'm not employed right now but please keep reading(!). I want to assure you that rent will never be a problem, and I'd like to walk you through exactly why and I can show proof of everything below.</div>
+    <div class="ml-modal-list">
+      <div class="ml-modal-item">
+        <div class="ml-modal-item-key">Income history</div>
+        <div class="ml-modal-item-val">I've been steadily employed for the past year every month while writing my thesis in Copenhagen. (more info below).</div>
+      </div>
+      <div class="ml-modal-item">
+        <div class="ml-modal-item-key">Savings</div>
+        <div class="ml-modal-item-val">Solid. Sufficient to cover rent and deposit for many months ahead. Full documentation available on request.</div>
+      </div>
+      <div class="ml-modal-item">
+        <div class="ml-modal-item-key">Guarantors</div>
+        <div class="ml-modal-item-val">If it would put your mind at ease, both my parents are EU citizens with stable income and have offered to act as guarantors.</div>
+      </div>
+      <div class="ml-modal-item">
+        <div class="ml-modal-item-key">Deposit</div>
+        <div class="ml-modal-item-val">Ready to pay at signing.</div>
+      </div>
+      <div class="ml-modal-item">
+        <div class="ml-modal-item-key">Temporary income</div>
+        <div class="ml-modal-item-val">As an EU citizen relocating within the EU, I'm bringing my Danish unemployment benefit with me, guaranteed for 3 months (until end of August). I'm fully expecting to be employed again well before that runs out. I'm in active interview rounds for several positions in the Dutch market and confident I'll have something secured soon, and until then I'm guaranteed unemployment benefits from Denmark (more info below).</div>
+      </div>
+    </div>
+
+    <!-- Income history table -->
+    <div class="ml-history">
+      <div class="ml-history-head">
+        <div class="ml-history-title">Income history</div>
+        <div class="ml-history-note">Gross monthly income · Oct 2025 → Aug 2026<br>Documentation can be shown · €1 ≈ 7.46 kr.</div>
+      </div>
+      <div class="ml-history-table">
+        <div class="ml-history-row ml-history-header">
+          <div>Month</div>
+          <div>DKK</div>
+          <div>EUR</div>
+          <div class="ml-history-source">Source</div>
+        </div>
+        <div class="ml-history-row"><div>October 2025</div><div>26,066</div><div>€3,492</div><div class="ml-history-source">Salary</div></div>
+        <div class="ml-history-row"><div>November 2025</div><div>21,485</div><div>€2,879</div><div class="ml-history-source">Salary</div></div>
+        <div class="ml-history-row"><div>December 2025</div><div>17,920</div><div>€2,401</div><div class="ml-history-source">Salary</div></div>
+        <div class="ml-history-row"><div>January 2026</div><div>29,289</div><div>€3,925</div><div class="ml-history-source">Salary</div></div>
+        <div class="ml-history-row"><div>February 2026</div><div>20,585</div><div>€2,758</div><div class="ml-history-source">Salary</div></div>
+        <div class="ml-history-row"><div>March 2026</div><div>20,930</div><div>€2,805</div><div class="ml-history-source">Salary</div></div>
+        <div class="ml-history-row"><div>April 2026</div><div>43,000</div><div>€5,762</div><div class="ml-history-source">Salary + holiday pay</div></div>
+        <div class="ml-history-row"><div>May 2026</div><div>15,700</div><div>€2,104</div><div class="ml-history-source ml-history-benefit">Unemployment benefit</div></div>
+        <div class="ml-history-row"><div>June 2026</div><div>15,700</div><div>€2,104</div><div class="ml-history-source ml-history-benefit">Unemployment benefit</div></div>
+        <div class="ml-history-row"><div>July 2026</div><div>15,700</div><div>€2,104</div><div class="ml-history-source ml-history-benefit">Unemployment benefit</div></div>
+        <div class="ml-history-row"><div>August 2026</div><div>15,700</div><div>€2,104</div><div class="ml-history-source ml-history-benefit">Unemployment benefit</div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+const traitData = {
+  creative:{
+    name:"Creative",
+    body:"I love making and fixing things with my hands. Sewing, drawing, working with clay, small wood projects, putting up shelves, or just figuring out how to make a space work better. <em>This whole application is built in that spirit, actually.</em> If I see something around the house that could use a small fix, I'll happily do it, but of course never build or change anything we haven't agreed on first."
+  },
+  calm:{
+    name:"Calm",
+    body:"Home is where I recharge, so I really value calm, considerate shared living, being respectful around noise, schedules, and each other's quiet time. <em>I'm happiest when home feels like a safe, peaceful space we both look forward to coming back to,</em> and I'll do my part to keep it that way: contributing to a tidy, hygienic home and sharing the cleaning without keeping score. A clean, calm space is part of how I refuel."
+  },
+  queer:{
+    name:"Queer",
+    body:"Yours is the first ad I've come across that explicitly says <em>queer safe space</em> and that meant a lot. I'm queer myself, and I know how rare it is to feel that openness from the very first sentence, it's a big part of why I want to live here."
+  },
+  passion:{
+    name:"Passionate",
+    body:"I just finished my master's thesis on how neurodivergent employees experience work, using ableism theory, neuronormativity, and minority stress models. Basically, on how workplaces are often built for one kind of mind and exclude the rest. <em>The same logic applies to homes.</em> I read your ad and saw someone who already gets that, and I wanted to write to say: I see it too, and I've spent two years trying to understand how to do better."
+  },
+  caring:{
+    name:"Caring",
+    body:"The people in my life would tell you I care deeply, about them, about the planet, about human rights, about doing the small things that make others feel seen. I have a lot of empathy for disabled people in particular, and I take it as my own responsibility to keep learning and stay educated, because I know empathy without effort isn't enough. <em>I show up for the people around me</em>, and I take that energy with me into a shared home too."
+  },
+  curious:{
+    name:"Curious",
+    body:"I'm endlessly curious, always looking for new things to learn, new cultures to understand, new perspectives that stretch how I see the world. <em>It's part of why moving back to the Netherlands feels right:</em> a country I already know, a city I love, but still so much I want to keep learning."
+  }
+};
+
+const tiles = document.querySelectorAll('.cas-trait-tile');
+const popover = document.getElementById('traitPopover');
+const popName = document.getElementById('popoverName');
+const popBody = document.getElementById('popoverBody');
+
+function placePopover(tile){
+  const col = tile.closest('.cas-traits-col');
+  const colRect = col.getBoundingClientRect();
+  const tileRect = tile.getBoundingClientRect();
+  const top = tileRect.top - colRect.top + tileRect.height + 12;
+  let left = tileRect.left - colRect.left + tileRect.width/2 - 160;
+  if(left < 0) left = 0;
+  const maxLeft = colRect.width - 320;
+  if(left > maxLeft) left = maxLeft;
+  popover.style.top = top + 'px';
+  popover.style.left = left + 'px';
+}
+
+tiles.forEach(t=>{
+  t.addEventListener('click',(e)=>{
+    if(e.target.classList.contains('cas-trait-close')){
+      t.classList.remove('active');
+      popover.classList.remove('show');
+      e.stopPropagation();
+      return;
+    }
+    const wasActive = t.classList.contains('active');
+    tiles.forEach(x=>x.classList.remove('active'));
+    if(wasActive){popover.classList.remove('show');return;}
+    t.classList.add('active');
+    const d = traitData[t.dataset.trait];
+    popName.textContent = d.name;
+    popBody.innerHTML = d.body;
+    placePopover(t);
+    popover.classList.add('show');
+  });
+});
+
+document.addEventListener('click',(e)=>{
+  if(!e.target.closest('.cas-trait-tile') && !e.target.closest('.cas-popover')){
+    tiles.forEach(x=>x.classList.remove('active'));
+    popover.classList.remove('show');
+  }
+});
+
+window.addEventListener('resize',()=>{
+  const active = document.querySelector('.cas-trait-tile.active');
+  if(active) placePopover(active);
+});
+
+window.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>{
+    const first = document.querySelector('.cas-trait-tile[data-trait="creative"]');
+    if(first) first.click();
+  }, 600);
+});
+
+// Motherlode modal
+const mlCard = document.getElementById('mlCard');
+const mlBg = document.getElementById('mlModalBg');
+const mlClose = document.getElementById('mlModalClose');
+
+mlCard.addEventListener('click',()=>{
+  mlBg.classList.add('show');
+  document.body.style.overflow = 'hidden';
+});
+function closeMl(){
+  mlBg.classList.remove('show');
+  document.body.style.overflow = '';
+}
+mlClose.addEventListener('click',closeMl);
+mlBg.addEventListener('click',(e)=>{if(e.target === mlBg) closeMl();});
+document.addEventListener('keydown',(e)=>{if(e.key === 'Escape' && mlBg.classList.contains('show')) closeMl();});
+</script>
+
+</body>
+</html>
