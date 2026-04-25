@@ -343,7 +343,9 @@ body{
   margin-top:16px;padding:6px 2px 0;
   font-family:'Nunito',sans-serif;font-size:13.5px;
   line-height:1.5;color:var(--ink-soft);
+  display:flex;flex-direction:column;gap:8px;
 }
+.tl-prefer-row{display:block;}
 .tl-prefer-key{
   font-family:'JetBrains Mono',monospace;font-size:10px;
   color:var(--sims-blue-dk);letter-spacing:1.5px;
@@ -1090,8 +1092,14 @@ body{
       </div>
 
       <div class="tl-prefer">
-        <span class="tl-prefer-key">Preferred period:</span>
-        <span class="tl-prefer-val">My ideal period is as long as possible / as you are comfortable committing to.</span>
+        <div class="tl-prefer-row">
+          <span class="tl-prefer-key">Preferred move-in:</span>
+          <span class="tl-prefer-val">Flexible, preferred anytime during May (will pay from May 6th of course no matter the exact move-in day).</span>
+        </div>
+        <div class="tl-prefer-row">
+          <span class="tl-prefer-key">Preferred move-out:</span>
+          <span class="tl-prefer-val">Open-ended but planning to stay long-term, so I would prefer to agree on a period as long as you are comfortable committing to.</span>
+        </div>
       </div>
     </div>
 
